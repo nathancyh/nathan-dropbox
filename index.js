@@ -8,6 +8,31 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileUpload());
 
 let cache = {};
+const uploadDir = __dirname + path.sep + "uploads";
+
+function readFile(fileName) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(uploadDir + path.sep + fileName, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(body); //TODO:
+      }
+    });
+  });
+}
+
+function writeFile(name, body) {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(uploadDir, path.sep + name, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(readFile(body)); //TODO:
+      }
+    });
+  });
+}
 
 app.get("/", function (req, res) {
   res.sendFile(__dirname + "/index.html");
@@ -22,7 +47,7 @@ app.post("/upload", function (req, res) {
   }
 
   uploadedFile = req.files.uploadfile;
-  uploadPath = __dirname + "/uploaded" + uploadedFile.name;
+  uploadPath = __dirname + path.sep + "uploads" + path.sep + uploadedFile.name;
 
   uploadedFile.mv(uploadPath, function (err) {
     if (err) return res.status(500).send(err);
@@ -31,14 +56,9 @@ app.post("/upload", function (req, res) {
   });
 });
 
-app.listen(8000, () => {
-  console.log("App listening on port 8000!");
+let port = 8000;
+app.listen(port, () => {
+  console.log(`App listening on port ${port}!`);
 });
 
-// function readFile(params) {
-//   return new Promise(req, res) {
-
-//   };
-// }
-
-function writeFile(params) {}
+// TODO: Ensure your writeFile calls the readFile function at the end
