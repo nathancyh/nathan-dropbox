@@ -1,3 +1,6 @@
+// TODO:
+//0. Display on system file upon intial load get()
+
 //Setup Express
 const express = require("express");
 const app = express();
@@ -12,86 +15,82 @@ app.use(fileUpload());
 const fs = require("fs");
 const path = require("path");
 
+// let cache = { 1: "test1", 2: "test2" };
 let cache = {};
 const port = 8080;
 const uploadDir = __dirname + path.sep + "uploads";
 
-//Promised read write
-function writeFile(name, body) {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(uploadDir, path.sep + name, (err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(name); //TODO: log back the newly written file?
-      }
-    });
-  });
-}
-
-let readFile = function (fileName) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(uploadDir + path.sep + fileName, (err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(body); //TODO:
-      }
-    });
-  });
-};
-
-//Routing
+//Serve Main page
 app.get("/", function (req, res) {
   res.sendFile(__dirname + "/index.html");
 });
 
 //Upload
 app.post("/upload", function (req, res) {
-  // let uploadedFile;
-  // let uploadPath;
-  console.log(req.files);
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send("No files were uploaded.");
   }
 
   let uploadedFile = req.files.uploadfile;
-  let uploadPath =
-    __dirname + path.sep + "uploads" + path.sep + uploadedFile.name;
+  let uploadName = uploadDir + path.sep + uploadedFile.name;
 
-  uploadedFile.mv(uploadPath, function (err) {
-    if (err) return res.status(500).send(err);
-    // console.log(req.files.uploadfile.name);
-    res.send(`File ${req.files.uploadfile.name} uploaded`);
-  });
+  // uploadedFile.mv(uploadName, function (err) {
+  //   if (err) return res.status(500).send(err);
+  //   cache[`${uploadedFile.name}`] = {
+  //     mimetype: uploadedFile.mimetype,
+  //     data: uploadedFile.data,
+  //   };
+  //   res.send(`File ${uploadedFile.name} uploaded`);
+  //   console.log(cache);
+  // });
 
-  // writeFile() //TODO: pass in 'name' of array? or just an index
-  //   .then(readFile)
-  //   .catch((err) => {
-  //     console.log(`error catched ${err}`);
-  //   });
-  //cache.push(req.body) //USE COUNT++?
-  //cache.length // lol
+  //Promised read write
+  function writeFile(name) {
+    return new Promise((resolve, reject) => {
+      fs.writeFile(uploadDir + path.sep + name, uploadedFile.data, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(name);
+        }
+      });
+    });
+  }
 
-  // var element = { name: name };
-  // cache[`${count}`] = element;
-  // cache[`${count}`] = { name: 5 , data: xxx};
-  // cache[`${count}`] = { name: 10 };
+  let readFile = function (fileName) {
+    return new Promise((resolve, reject) => {
+      fs.readFile(uploadDir + path.sep + fileName, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  };
 
-  // Cart is now:
-  // { "1": { quantity: 5 }, "2": { quantity: 10 } }
+  writeFile(uploadedFile.name)
+    .then((filename) => readFile(filename))
+    .then((data) => {
+      cache[`${uploadedFile.name}`] = {
+        mimetype: uploadedFile.mimetype,
+        data: data,
+      };
+      res.send(`File ${uploadedFile.name} uploaded`);
+      console.log(cache);
+      // console.log(Object.keys(cache).length);
+    });
 });
 
 //Download
 app.get("/download/:filename", function (req, res) {
-  const file = `${__dirname}/uploads/${req.params.filename}`;
-  console.log(req.params);
-  console.log(file);
-  res.download(file);
+  const target = req.params.filename;
+  res.setHeader("Content-Description", "File Transfer");
+  res.setHeader("Content-Disposition", `attachment; filename=${target}`);
+  res.setHeader("Content-Type", "application/octet-stream");
+  res.end(cache[`${target}`].data);
 });
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}!`);
 });
-
-// TODO: Ensure your writeFile calls the readFile function at the end
