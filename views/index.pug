@@ -1,29 +1,41 @@
-<!DOCTYPE html>
-<html>
-  <head>
+html
+ head
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Simple Dropbox</title>
-    <style>
+    style.
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         padding: 20px 250px;
       }
-    </style>
-  </head>
-  <body>
+      li {
+        font-size: 20px;
+        padding: 10px 5px
+      }
+body
+    | 
     <h1>Nathan's Dropbox</h1>
-    <form
+    form(
       ref="uploadForm"
       id="uploadForm"
       action="http://localhost:8080/upload"
       method="post"
-      enctype="multipart/form-data"
-    >
+      enctype="multipart/form-data")
       <input type="file" name="uploadfile" />
       <input type="submit" value="Upload!" />
-    </form>
+    | 
     <h3>To Download: /download/:filename</h3>
-  </body>
-</html>
+    <h3>Refresh to see cached files</h3>
+    <h3>Cached files:</h3>
+    ul( id="filelist"
+        style="list-style: none"
+    )
+      li= message0
+      li= message1
+      li= message2
+      li= message3
+      li= message4
+    
+    
+

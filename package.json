@@ -19,6 +19,7 @@
   "homepage": "https://github.com/nathancyh/nathan-dropbox#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "express-fileupload": "^1.2.1"
+    "express-fileupload": "^1.2.1",
+    "pug": "^3.0.0"
   }
 }

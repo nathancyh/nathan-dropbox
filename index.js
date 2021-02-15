@@ -11,6 +11,7 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 const fileUpload = require("express-fileupload");
 app.use(fileUpload());
+app.set("view engine", "pug");
 
 //Setup node
 const fs = require("fs");
@@ -21,10 +22,19 @@ let cache = {};
 let fileList = {};
 const port = 8080;
 const uploadDir = __dirname + path.sep + "uploads";
+let domMessage = [];
 
 //Serve Main page
 app.get("/", function (req, res) {
-  res.sendFile(__dirname + "/index.html");
+  // res.sendFile(__dirname + "/index.html"); //static page
+  console.log(Object.keys(cache));
+  res.render("index", {
+    message0: Object.keys(cache)[0],
+    message1: Object.keys(cache)[1],
+    message2: Object.keys(cache)[2],
+    message3: Object.keys(cache)[3],
+    message4: Object.keys(cache)[4],
+  });
 });
 
 //Upload
@@ -78,13 +88,12 @@ app.post("/upload", function (req, res) {
         mimetype: uploadedFile.mimetype,
         data: data,
       };
-
       fileList[`${uploadedFile.name}`] = {
         mimetype: uploadedFile.mimetype,
       };
       res.status(200).send(`File ${uploadedFile.name} uploaded`);
-      console.log(cache);
-      console.log(fileList);
+      // console.log(cache);
+      // console.log(fileList);
     });
 });
 
