@@ -1,5 +1,6 @@
-// TODO:
 //0. Display on system file upon intial load get()
+//Get all uploaded files JSON
+//
 
 //Setup Express
 const express = require("express");
@@ -17,6 +18,7 @@ const path = require("path");
 
 // let cache = { 1: "test1", 2: "test2" };
 let cache = {};
+let fileList = {};
 const port = 8080;
 const uploadDir = __dirname + path.sep + "uploads";
 
@@ -32,7 +34,7 @@ app.post("/upload", function (req, res) {
   }
 
   let uploadedFile = req.files.uploadfile;
-  let uploadName = uploadDir + path.sep + uploadedFile.name;
+  // let uploadName = uploadDir + path.sep + uploadedFile.name;
 
   // uploadedFile.mv(uploadName, function (err) {
   //   if (err) return res.status(500).send(err);
@@ -76,9 +78,13 @@ app.post("/upload", function (req, res) {
         mimetype: uploadedFile.mimetype,
         data: data,
       };
-      res.send(`File ${uploadedFile.name} uploaded`);
+
+      fileList[`${uploadedFile.name}`] = {
+        mimetype: uploadedFile.mimetype,
+      };
+      res.status(200).send(`File ${uploadedFile.name} uploaded`);
       console.log(cache);
-      // console.log(Object.keys(cache).length);
+      console.log(fileList);
     });
 });
 
@@ -89,6 +95,11 @@ app.get("/download/:filename", function (req, res) {
   res.setHeader("Content-Disposition", `attachment; filename=${target}`);
   res.setHeader("Content-Type", "application/octet-stream");
   res.end(cache[`${target}`].data);
+});
+
+//Get Filelist
+app.get("/filelist", function (req, res) {
+  res.status(200).send(JSON.stringify(fileList));
 });
 
 app.listen(port, () => {
