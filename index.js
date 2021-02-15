@@ -38,14 +38,36 @@ app.get("/", function (req, res) {
 });
 
 //Upload
-app.post("/upload", function (req, res) {
+app.post("/upload", uploadFiles);
+
+//Download
+app.get("/download/:filename", function (req, res) {
+  const target = req.params.filename;
+  res.setHeader("Content-Description", "File Transfer");
+  res.setHeader("Content-Disposition", `attachment; filename=${target}`);
+  res.setHeader("Content-Type", "application/octet-stream");
+  res.end(cache[`${target}`].data);
+});
+
+//Get Filelist
+app.get("/filelist", function (req, res) {
+  res.status(200).json(fileList);
+});
+
+app.listen(port, () => {
+  console.log(`App listening on port ${port}!`);
+});
+
+//Upload Function
+function uploadFiles(req, res) {
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send("No files were uploaded.");
   }
 
   let uploadedFile = req.files.uploadfile;
   // let uploadName = uploadDir + path.sep + uploadedFile.name;
-
+  // Alternative to promised read/write
+  ////////////////////////////////////////
   // uploadedFile.mv(uploadName, function (err) {
   //   if (err) return res.status(500).send(err);
   //   cache[`${uploadedFile.name}`] = {
@@ -55,6 +77,7 @@ app.post("/upload", function (req, res) {
   //   res.send(`File ${uploadedFile.name} uploaded`);
   //   console.log(cache);
   // });
+  ////////////////////////////////////////
 
   //Promised read write
   function writeFile(name) {
@@ -96,22 +119,4 @@ app.post("/upload", function (req, res) {
       // console.log(cache);
       console.log(fileList);
     });
-});
-
-//Download
-app.get("/download/:filename", function (req, res) {
-  const target = req.params.filename;
-  res.setHeader("Content-Description", "File Transfer");
-  res.setHeader("Content-Disposition", `attachment; filename=${target}`);
-  res.setHeader("Content-Type", "application/octet-stream");
-  res.end(cache[`${target}`].data);
-});
-
-//Get Filelist
-app.get("/filelist", function (req, res) {
-  res.status(200).json(fileList);
-});
-
-app.listen(port, () => {
-  console.log(`App listening on port ${port}!`);
-});
+}
