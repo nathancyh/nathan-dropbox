@@ -90,10 +90,11 @@ app.post("/upload", function (req, res) {
       };
       fileList[`${uploadedFile.name}`] = {
         mimetype: uploadedFile.mimetype,
+        url: `http://localhost:${port}/download/${uploadedFile.name}`,
       };
       res.status(200).send(`File ${uploadedFile.name} uploaded`);
       // console.log(cache);
-      // console.log(fileList);
+      console.log(fileList);
     });
 });
 
@@ -108,7 +109,7 @@ app.get("/download/:filename", function (req, res) {
 
 //Get Filelist
 app.get("/filelist", function (req, res) {
-  res.status(200).send(JSON.stringify(fileList));
+  res.status(200).json(fileList);
 });
 
 app.listen(port, () => {
