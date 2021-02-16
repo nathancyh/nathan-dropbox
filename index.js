@@ -17,12 +17,10 @@ app.set("view engine", "pug");
 const fs = require("fs");
 const path = require("path");
 
-// let cache = { 1: "test1", 2: "test2" };
 let cache = {};
 let fileList = {};
 const port = 8080;
 const uploadDir = __dirname + path.sep + "uploads";
-let domMessage = [];
 
 //Serve Main page
 app.get("/", function (req, res) {
@@ -115,7 +113,7 @@ function uploadFiles(req, res) {
         mimetype: uploadedFile.mimetype,
         url: `http://localhost:${port}/download/${uploadedFile.name}`,
       };
-      res.status(200).send(`File ${uploadedFile.name} uploaded`);
+      res.redirect("/");
       // console.log(cache);
       console.log(fileList);
     });
