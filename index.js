@@ -41,10 +41,7 @@ app.post("/upload", uploadFiles);
 //Download
 app.get("/download/:filename", function (req, res) {
   const target = req.params.filename;
-  res.setHeader("Content-Description", "File Transfer");
-  res.setHeader("Content-Disposition", `attachment; filename=${target}`);
-  res.setHeader("Content-Type", "application/octet-stream");
-  res.end(cache[`${target}`].data);
+  res.send(cache[`${target}`].data);
 });
 
 //Get Filelist
