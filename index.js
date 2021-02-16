@@ -29,9 +29,7 @@ app.get("/", function (req, res) {
   console.log(Object.keys(cache));
   for (let index = 0; index < 5; index++) {
     if (Object.keys(cache)[index] !== undefined) {
-      messageArr[index] = `http://localhost:${port}/download/${
-        Object.keys(cache)[index]
-      }`;
+      messageArr[index] = Object.keys(cache)[index];
     } else messageArr[index] = "";
   }
   console.log(messageArr);
@@ -122,7 +120,7 @@ function uploadFiles(req, res) {
         mimetype: uploadedFile.mimetype,
         url: `http://localhost:${port}/download/${uploadedFile.name}`,
       };
-      res.status(200).send(`File ${uploadedFile.name} uploaded`);
+      res.redirect("/");
       // console.log(cache);
       console.log(fileList);
     });
