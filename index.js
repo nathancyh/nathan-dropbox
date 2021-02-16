@@ -17,23 +17,30 @@ app.set("view engine", "pug");
 const fs = require("fs");
 const path = require("path");
 
-// let cache = { 1: "test1", 2: "test2" };
 let cache = {};
 let fileList = {};
 const port = 8080;
 const uploadDir = __dirname + path.sep + "uploads";
-let domMessage = [];
+let messageArr = [];
 
 //Serve Main page
 app.get("/", function (req, res) {
   // res.sendFile(__dirname + "/index.html"); //static page
   console.log(Object.keys(cache));
+  for (let index = 0; index < 5; index++) {
+    if (Object.keys(cache)[index] !== undefined) {
+      messageArr[index] = `http://localhost:${port}/download/${
+        Object.keys(cache)[index]
+      }`;
+    } else messageArr[index] = "";
+  }
+  console.log(messageArr);
   res.render("index", {
-    message0: Object.keys(cache)[0],
-    message1: Object.keys(cache)[1],
-    message2: Object.keys(cache)[2],
-    message3: Object.keys(cache)[3],
-    message4: Object.keys(cache)[4],
+    message0: messageArr[0],
+    message1: messageArr[1],
+    message2: messageArr[2],
+    message3: messageArr[3],
+    message4: messageArr[4],
   });
 });
 
