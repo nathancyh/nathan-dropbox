@@ -5,10 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Simple Dropbox</title>
+    <script src="/script.js"></script>
     <style>
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         padding: 20px 250px;
+      }
+      li {
+        font-size: 20px;
+        padding: 10px 5px;
       }
     </style>
   </head>
@@ -25,5 +30,8 @@
       <input type="submit" value="Upload!" />
     </form>
     <h3>To Download: /download/:filename</h3>
+    <h3>Refresh to see cached files</h3>
+    <h3>Cached files:</h3>
+    <ul style="list-style: none" id="filelist"></ul>
   </body>
 </html>

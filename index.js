@@ -5,13 +5,12 @@
 //Setup Express
 const express = require("express");
 const app = express();
-// app.use(express.static("public"));
+app.use(express.static("public"));
 app.use(express.static("uploads"));
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 const fileUpload = require("express-fileupload");
 app.use(fileUpload());
-app.set("view engine", "pug");
 
 //Setup node
 const fs = require("fs");
@@ -24,15 +23,7 @@ const uploadDir = __dirname + path.sep + "uploads";
 
 //Serve Main page
 app.get("/", function (req, res) {
-  // res.sendFile(__dirname + "/index.html"); //static page
-  console.log(Object.keys(cache));
-  res.render("index", {
-    message0: Object.keys(cache)[0],
-    message1: Object.keys(cache)[1],
-    message2: Object.keys(cache)[2],
-    message3: Object.keys(cache)[3],
-    message4: Object.keys(cache)[4],
-  });
+  res.sendFile(__dirname + "/index.html"); //static page
 });
 
 //Upload
@@ -41,7 +32,11 @@ app.post("/upload", uploadFiles);
 //Download
 app.get("/download/:filename", function (req, res) {
   const target = req.params.filename;
-  res.send(cache[`${target}`].data);
+  if (target in cache) {
+    res.send(cache[`${target}`].data);
+  } else {
+    res.download(__dirname + path.sep + "uploads" + path.sep + target);
+  }
 });
 
 //Get Filelist
